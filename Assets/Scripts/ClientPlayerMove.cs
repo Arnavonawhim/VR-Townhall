@@ -6,14 +6,12 @@ using StarterAssets;
 
 public class ClientPlayerMove : NetworkBehaviour
 {
-    private PlayerInput m_PlayerInput;
+    [SerializeField] private PlayerInput m_PlayerInput;
     //[SerializeField] private StarterAssetsInputs m_StarterAssetsInputs;
-    private BasicThirdPersonMovement m_ThirdPersonController;
+    [SerializeField] private BasicThirdPersonMovement m_ThirdPersonController;
 
     private void Awake()
     {
-        m_PlayerInput = GetComponent<PlayerInput>();
-        m_ThirdPersonController = GetComponent<BasicThirdPersonMovement>();
         //m_StarterAssetsInputs.enabled = false;
         m_PlayerInput.enabled = false;
         m_ThirdPersonController.enabled = false;
