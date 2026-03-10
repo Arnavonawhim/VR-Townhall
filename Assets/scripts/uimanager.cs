@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class UIManager : MonoBehaviour
 {
-    public GameObject mainPanel;
     public GameObject hairPanel;
     public GameObject clothesPanel;
     public GameObject skinPanel;
@@ -53,15 +52,8 @@ public class UIManager : MonoBehaviour
         sunglassesPanel.SetActive(true);
     }
 
-    public void OpenMainPanel()
-    {
-        CloseAllPanels();
-        mainPanel.SetActive(true);
-    }
-
     void CloseAllPanels()
     {
-        mainPanel.SetActive(false);
         hairPanel.SetActive(false);
         clothesPanel.SetActive(false);
         skinPanel.SetActive(false);
