@@ -1,0 +1,477 @@
+fileFormatVersion: 2
+guid: afbc08bcbb5db6a48883db72dbf9bfd1
+ModelImporter:
+  serializedVersion: 22200
+  internalIDToNameTable: []
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: BlackLeather
+    second: {fileID: 2100000, guid: cfb6c82c19b6b4a43b671cee19349c8c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Cord
+    second: {fileID: 2100000, guid: d336594a54fe86f468f265a888949b78, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Human.005.body
+    second: {fileID: 2100000, guid: c009b177ae45e2e48a3ecaaf1718167b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Human.culturalibre_faun_beard.001
+    second: {fileID: 2100000, guid: a8b58b81c1ccefd4d8f12deb32ad8c7c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Human.elvs_covid_goggles1.001
+    second: {fileID: 2100000, guid: 925a976d43d1b3d47ae0987985c77678, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Human.elvs_grump_hair.001
+    second: {fileID: 2100000, guid: 7cfbc9398899bd84ab9c9dbc2097b6d2, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Human.elvs_male_coveralls_1
+    second: {fileID: 2100000, guid: 0a59194f3e39216468190b30b556be4c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Human.elvs_maxwell_hair.001
+    second: {fileID: 2100000, guid: 638292bab1e93f944b04c75189ae690f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Human.elvs_racing_fire_suit_female1
+    second: {fileID: 2100000, guid: 947f9c81509f144468257f8e32b0239b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Human.elvs_zombie_killer_sneakers
+    second: {fileID: 2100000, guid: 3d7cb5e294d7b584fb6f158c7dc8ff6d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Human.fedora_cocked
+    second: {fileID: 2100000, guid: 6985582157dc4d949bf54b1a29f4971d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Human.grinsegold_beard_sigmund_wip.001
+    second: {fileID: 2100000, guid: 346390f133b71ea4ca56b7837d39ec59, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Human.high-poly
+    second: {fileID: 2100000, guid: 95d8cb0bcbc1cc84db9be5e02b7bf7af, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Human.male_casualsuit01.001
+    second: {fileID: 2100000, guid: fedef40301afbec4aacbe44f289a6ce4, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Human.male_casualsuit02
+    second: {fileID: 2100000, guid: 615ce8f935eefa9499e438dae410184f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Human.male_casualsuit03
+    second: {fileID: 2100000, guid: d2479001f67886e4092004a645c25a92, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Human.male_casualsuit05
+    second: {fileID: 2100000, guid: 88af74ea23fef6e4b8367a1a14bc5475, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Human.male_elegantsuit01
+    second: {fileID: 2100000, guid: 100954f43ef77974c89efcb1fa0e1a35, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Human.mindfront_eyelashes_01.002
+    second: {fileID: 2100000, guid: 52054c4360e70ee43bbeaced0faee83a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Human.mindfront_eyelashes_04.001
+    second: {fileID: 2100000, guid: 8ecca1d9779530041985ed9ba6667a6d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Human.mindfront_eyelashes_05
+    second: {fileID: 2100000, guid: c29688b05e56b074692b8a946985f8e3, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Human.punkduck_glasses_modern_form.001
+    second: {fileID: 2100000, guid: b2ea6936e831ade418a9e95599457701, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Human.punkduck_sport-sunglasses.001
+    second: {fileID: 2100000, guid: 3afb0dc5a121c614b936f183c3c0dc9f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Human.rehmanpolanski_beard_viking.001
+    second: {fileID: 2100000, guid: cac5483b6e096264db5507ce852a7d70, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Human.rehmanpolanski_moustache_viking.001
+    second: {fileID: 2100000, guid: 2e2c0702829ea224e8b1baae788c198c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Human.shoes01
+    second: {fileID: 2100000, guid: 1cf163dabef6870419012c271d27daf6, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Human.shoes02
+    second: {fileID: 2100000, guid: 81dea6ba5c083254396aecb57d855422, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Human.shoes03
+    second: {fileID: 2100000, guid: f297a402d9eb6b440a5d6ee674ff5ad7, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Human.shoes04
+    second: {fileID: 2100000, guid: 152a8c9309cbdc142a65830fc5c9ae59, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Human.shoes05
+    second: {fileID: 2100000, guid: 1f7ce791e237c65409de653a33dd0639, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Human.shoes06
+    second: {fileID: 2100000, guid: 216b1a45d28060b46ba19960b91107e0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Human.short01.001
+    second: {fileID: 2100000, guid: 0994d3424869e854aa75e88851f3a068, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Human.short02.001
+    second: {fileID: 2100000, guid: 1c3fd15588f6c384080754d9c9acdbd2, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Human.short03.001
+    second: {fileID: 2100000, guid: 66a7ff55402fb534c9aed88093da02e5, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Human.short04.001
+    second: {fileID: 2100000, guid: 07f35a999ab680d4daad891b2305a6e2, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Human.wdg_scruffy_beard.001
+    second: {fileID: 2100000, guid: 528bffbfbc8c0a845b7bfb58376c3ed1, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: blinn1SG
+    second: {fileID: 2100000, guid: 77057924e62a4eb4c95f50f0546c5c85, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: blinn3SG
+    second: {fileID: 2100000, guid: 31c5dfbca01e14a4faa71acd3d2c1c90, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: blinn4SG
+    second: {fileID: 2100000, guid: 07f4085e05d1a1c4d99e4520cb1718c1, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: blinn6SG
+    second: {fileID: 2100000, guid: c14d7663072de21478c89ce06ee75c0d, type: 2}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: BeardViking
+    second: {fileID: 2800000, guid: 8c6f083673d4d1548aca1ebd298e7082, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Image_15.002
+    second: {fileID: 2800000, guid: a7170c7e983b314488198c6ab2f42306, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Material_Diffuse_Color1_d
+    second: {fileID: 2800000, guid: 667711482417d1547ba1fa148a0c0675, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: MoustacheViking
+    second: {fileID: 2800000, guid: 00e7b4f7ef03b994cacf9985ffcbd417, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: beard2_texture-SMUDGE2
+    second: {fileID: 2800000, guid: 37cf668fa95280c4d9bb53b84921bddc, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: brown
+    second: {fileID: 2800000, guid: a757c4489269a2741b845b64cafafd08, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: brown_eye
+    second: {fileID: 2800000, guid: 5e3c439948ec26b4ca3e7c541d6f3bf7, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: covidgogglestex3
+    second: {fileID: 2800000, guid: 46eea446f5e126c42ae5d47191aff052, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: elvs_grumphair
+    second: {fileID: 2800000, guid: a26df5560080d3945a75bda0e9c58906, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: fedora_diffuse
+    second: {fileID: 2800000, guid: b3d5c8903a806b347860e2f697ca1b60, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: femaleracetex1
+    second: {fileID: 2800000, guid: eb19d425a8bb40f4684ac6b69ef82f7e, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: glasses
+    second: {fileID: 2800000, guid: efc781d502ddace4bb06c757343efb43, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: male_casualsuit01_diffuse
+    second: {fileID: 2800000, guid: f6de67f31d1a86541b0176f5217ca786, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: male_casualsuit02_diffuse
+    second: {fileID: 2800000, guid: bcbb1617887027e479054da24f2c4c6a, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: male_casualsuit03_diffuse
+    second: {fileID: 2800000, guid: e09c87b5600370143805747b290d813d, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: male_casualsuit05_diffuse
+    second: {fileID: 2800000, guid: c2990458aa2a50e4bae6febf11c25252, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: male_elegantsuit01_diffuse
+    second: {fileID: 2800000, guid: cd3d2194472a6ba41901af3efe7bc8be, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: maxhairtex6
+    second: {fileID: 2800000, guid: 8d0666660cfeb104ab2c3465fd858de2, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: middleage_lightskinned_female_diffuse
+    second: {fileID: 2800000, guid: 4b104bd12f4c3584ca398d3c42decba7, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: middleage_lightskinned_male_diffuse
+    second: {fileID: 2800000, guid: 736c89e0f09b6dc4a802c8f85058f63b, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: overallstexture1
+    second: {fileID: 2800000, guid: 4e0d53c013e7c2847b11ff74f31f9ade, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: shoes01_diffuse
+    second: {fileID: 2800000, guid: f2cc52e6990a32f459fe8ac9e7aa07e9, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: shoes02_diffuse
+    second: {fileID: 2800000, guid: d957f72053112e94c89a7b8ba41399a0, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: shoes03_diffuse
+    second: {fileID: 2800000, guid: 801ef8f9a60fcbb44a123821856afdd5, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: shoes04_diffuse
+    second: {fileID: 2800000, guid: 47947cd763c81e244af095c9e107864e, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: shoes05_diffuse
+    second: {fileID: 2800000, guid: f16cefef639cc7240a4cd55cbd997974, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: shoes06_diffuse
+    second: {fileID: 2800000, guid: a83844fbbf8f1934e914d6d9eaf64764, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: short01_diffuse
+    second: {fileID: 2800000, guid: 0faf72daaad21fa488541f29605fc6d8, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: short02_diffuse
+    second: {fileID: 2800000, guid: 48e88f368506c484badaf9348b902ef5, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: short03_diffuse
+    second: {fileID: 2800000, guid: 16799e495ed89af48b09bc67df3d8289, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: short04_diffuse
+    second: {fileID: 2800000, guid: 095515a3c68c07847aeaa17ae2e04a65, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: sneakerstexture1
+    second: {fileID: 2800000, guid: d8dff0eb22dbf3f418d3c0555ff10ae9, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: sport_sunglasses
+    second: {fileID: 2800000, guid: 7edd3dcaffc897d46ae7414133f1c70a, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: young_lightskinned_male_diffuse
+    second: {fileID: 2800000, guid: 9f41ccbcb07ba224ebcce1fbfaad6337, type: 3}
+  materials:
+    materialImportMode: 2
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    removeConstantScaleCurves: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 3
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 0
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
+    importPhysicalCameras: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    nodeNameCollisionStrategy: 1
+    fileIdsGeneration: 2
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    keepQuads: 0
+    weldVertices: 1
+    bakeAxisConversion: 0
+    preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    optimizeBones: 1
+    meshOptimizationFlags: -1
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVMarginMethod: 1
+    secondaryUVMinLightmapResolution: 40
+    secondaryUVMinObjectScale: 1
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    strictVertexDataChecks: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  referencedClips: []
+  importAnimation: 1
+  humanDescription:
+    serializedVersion: 3
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    globalScale: 1
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 1
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
+  animationType: 3
+  humanoidOversampling: 1
+  avatarSetup: 1
+  addHumanoidExtraRootOnlyWhenUsingAvatar: 1
+  importBlendShapeDeformPercent: 1
+  remapMaterialsIfMaterialImportModeIsNone: 0
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
