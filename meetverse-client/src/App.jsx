@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import UnityEmbed from "./UnityEmbed";
 
 const API_BASE = "https://ai-avatar-backend-sti8.onrender.com/api/v1";
 
@@ -1179,7 +1180,7 @@ function SignupModal({ onClose, onSwitch, onSuccess }) {
   );
 }
 
-function Dashboard({ user, onLogout }) {
+function Dashboard({ user, onLogout, onEnter }) {
   return (
     <div className="dash">
       <div className="dash-card">
@@ -1190,13 +1191,18 @@ function Dashboard({ user, onLogout }) {
         <div className="dash-body">
           <div className="dash-status-box">
             <div className="dash-slbl">Integration Status</div>
-            <div className="dash-sval"><span className="sdot" />Authenticated — Unity module loading</div>
+            <div className="dash-sval"><span className="sdot" />Authenticated — Unity module ready</div>
           </div>
           <p className="dash-desc">
-            Your avatar environment is initialising. You will be redirected to the Unity session lobby
-            where you can {user?.userType==="creator"?"customise your avatar and host a session":"join an active session"}.
+            Your avatar environment is ready. Enter MeetVerse to{" "}
+            {user?.userType==="creator"?"customise your avatar and host a session":"browse sessions and join as your avatar"}.
           </p>
-          <button className="btn-out" onClick={onLogout}>Sign out</button>
+          <div style={{ display:"flex", gap:12, alignItems:"center", marginTop: 4 }}>
+            <button className="btn-primary" onClick={onEnter}>
+              Enter MeetVerse →
+            </button>
+            <button className="btn-out" onClick={onLogout}>Sign out</button>
+          </div>
         </div>
       </div>
     </div>
@@ -1205,30 +1211,41 @@ function Dashboard({ user, onLogout }) {
 
 export default function App() {
   const [modal, setModal] = useState(null);
+  const [inUnity, setInUnity] = useState(false);
   const [user, setUser] = useState(() => {
     try { return JSON.parse(localStorage.getItem("nv_user")); } catch { return null; }
   });
   function onSuccess(u) { setUser(u); setModal(null); }
-  function onLogout() { localStorage.removeItem("nv_token"); localStorage.removeItem("nv_user"); setUser(null); }
+  function onLogout() {
+    localStorage.removeItem("nv_token");
+    localStorage.removeItem("nv_user");
+    setUser(null);
+    setInUnity(false);
+  }
 
   return (
     <>
       <StyleInjector />
-      <Nav onLogin={()=>setModal("login")} onSignup={()=>setModal("signup")} />
-      {user ? <Dashboard user={user} onLogout={onLogout} /> : (
+      {inUnity && <UnityEmbed onExit={() => setInUnity(false)} />}
+      {!inUnity && (
         <>
-          <Hero onSignup={()=>setModal("signup")} />
-          <Marquee />
-          <HowItWorks />
-          <Features />
-          <Roles />
-          <Architecture />
-          <CTA onSignup={()=>setModal("signup")} />
-          <Footer />
+          <Nav onLogin={()=>setModal("login")} onSignup={()=>setModal("signup")} />
+          {user ? <Dashboard user={user} onLogout={onLogout} onEnter={() => setInUnity(true)} /> : (
+            <>
+              <Hero onSignup={()=>setModal("signup")} />
+              <Marquee />
+              <HowItWorks />
+              <Features />
+              <Roles />
+              <Architecture />
+              <CTA onSignup={()=>setModal("signup")} />
+              <Footer />
+            </>
+          )}
+          {modal==="login" && <LoginModal onClose={()=>setModal(null)} onSwitch={()=>setModal("signup")} onSuccess={onSuccess} />}
+          {modal==="signup" && <SignupModal onClose={()=>setModal(null)} onSwitch={()=>setModal("login")} onSuccess={onSuccess} />}
         </>
       )}
-      {modal==="login" && <LoginModal onClose={()=>setModal(null)} onSwitch={()=>setModal("signup")} onSuccess={onSuccess} />}
-      {modal==="signup" && <SignupModal onClose={()=>setModal(null)} onSwitch={()=>setModal("login")} onSuccess={onSuccess} />}
     </>
   );
 }
