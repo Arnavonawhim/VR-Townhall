@@ -9,25 +9,21 @@ public class AvatarCustomizer : MonoBehaviour
 
     public void SelectCloth(int index)
     {
-        if (clothes == null || clothes.Length == 0)
-            return;
+        if (clothes == null || clothes.Length == 0) return;
+        if (index < 0 || index >= clothes.Length) return;
+        if (currentClothIndex == index) return;
 
-        if (index < 0 || index >= clothes.Length)
-            return;
-
-        if (currentClothIndex == index)
-            return;
-
-        // Disable all clothes
-        foreach (GameObject cloth in clothes)
+        for (int i = 0; i < clothes.Length; i++)
         {
-            if (cloth != null)
-                cloth.SetActive(false);
+            if (clothes[i] != null)
+                clothes[i].SetActive(i == index);
         }
 
-        // Enable selected cloth
-        clothes[index].SetActive(true);
-
         currentClothIndex = index;
+    }
+
+    public int GetCurrentClothIndex()
+    {
+        return currentClothIndex;
     }
 }
