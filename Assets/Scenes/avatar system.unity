@@ -7764,6 +7764,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sceneIndex: 1
+  avatarRoot: {fileID: 2561184866063441097}
 --- !u!114 &1672628805
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7810,7 +7811,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1672628804}
         m_TargetAssemblyTypeName: SceneLoader, Assembly-CSharp
-        m_MethodName: LoadSceneByIndex
+        m_MethodName: SaveAndLoadScene
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
