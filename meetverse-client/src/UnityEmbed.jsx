@@ -4,9 +4,9 @@ import { Unity, useUnityContext } from "react-unity-webgl";
 export default function UnityEmbed({ onExit }) {
   const { unityProvider, isLoaded, loadingProgression } = useUnityContext({
     loaderUrl:    "/unity/Build/Meetverse.loader.js",
-    dataUrl:      "/unity/Build/Meetverse.data",
-    frameworkUrl: "/unity/Build/Meetverse.framework.js",
-    codeUrl:      "/unity/Build/Meetverse.wasm",
+    dataUrl:      "/unity/Build/Meetverse.data.gz",
+    frameworkUrl: "/unity/Build/Meetverse.framework.js.gz",
+    codeUrl:      "/unity/Build/Meetverse.wasm.gz",
   });
 
   const loadPercent = Math.round(loadingProgression * 100);
