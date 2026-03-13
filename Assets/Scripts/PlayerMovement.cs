@@ -1,168 +1,131 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
-/// <summary>
-/// Third-person player movement for the auditorium scene.
-/// Uses Keyboard.current directly — no Input Actions asset needed.
-/// Attach to the player root that has a CharacterController component.
-/// </summary>
-[RequireComponent(typeof(CharacterController))]
-public class PlayerMovement : MonoBehaviour
+[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(CapsuleCollider))]
+public class PlayerController : MonoBehaviour
 {
     [Header("Movement")]
-    public float moveSpeed = 2f;
-    public float sprintSpeed = 3.5f;
+    public float walkSpeed = 3f;
+    public float runSpeed = 6f;
     public float rotationSpeed = 10f;
 
-    [Header("Gravity")]
-    public float gravity = -20f;
-
     [Header("Jump")]
-    public float jumpHeight = 1.2f;
+    public float jumpForce = 5f;
+    public float groundCheckDistance = 0.3f;
+    public LayerMask groundMask;
 
-    [Header("Camera")]
-    [Tooltip("Leave empty to auto-find Camera.main")]
-    public Transform cameraTransform;
-
-    [Header("Animation (Optional)")]
-    [Tooltip("Assign if you want movement animations")]
+    [Header("Animator")]
     public Animator animator;
-    public float animationSmoothTime = 0.1f;
 
-    [Header("Debug")]
-    public bool showDebugLogs = true;
+    private Rigidbody rb;
+    private Transform cameraTransform;
+    private Vector2 moveInput;
+    private bool isGrounded;
+    private bool jumpRequested;
 
-    private CharacterController controller;
-    private float verticalVelocity = 0f;
-    private float currentAnimSpeed = 0f;
-
-    void Start()
+    void Awake()
     {
-        controller = GetComponent<CharacterController>();
+        rb = GetComponent<Rigidbody>();
+        rb.freezeRotation = true;
+        rb.interpolation = RigidbodyInterpolation.Interpolate;
+        rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
+        cameraTransform = Camera.main.transform;
 
-        if (cameraTransform == null && Camera.main != null)
-        {
-            cameraTransform = Camera.main.transform;
-        }
-
-        if (controller == null)
-        {
-            Debug.LogError("[PlayerMovement] No CharacterController found!");
-        }
-
-        if (cameraTransform == null)
-        {
-            Debug.LogError("[PlayerMovement] No camera found!");
-        }
-
-        // Force spawn at Y = -116
-        Vector3 spawnPos = transform.position;
-        spawnPos.y = -116f;
-        transform.position = spawnPos;
+        // Auto-find animator on child if not assigned
+        if (animator == null)
+            animator = GetComponentInChildren<Animator>();
     }
 
     void Update()
     {
-        if (Keyboard.current == null || controller == null || cameraTransform == null)
+        moveInput = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+
+        // Jump input — only when grounded
+        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
+            jumpRequested = true;
+
+        CheckGround();
+        UpdateAnimator();
+    }
+
+    void FixedUpdate()
+    {
+        Move();
+        if (jumpRequested)
+        {
+            rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            jumpRequested = false;
+        }
+    }
+
+    void Move()
+    {
+        bool isSprinting = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+        float currentSpeed = (moveInput.magnitude > 0.1f && isSprinting) ? runSpeed : walkSpeed;
+
+        if (moveInput.magnitude < 0.1f)
+        {
+            rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
             return;
-
-        // --- Ground check using raycast for reliable grounding ---
-        bool isGrounded = controller.isGrounded;
-        
-        // Raycast down to find true ground position and snap to it
-        RaycastHit hit;
-        float rayLength = 5f;
-        if (Physics.Raycast(transform.position + Vector3.up * 0.5f, Vector3.down, out hit, rayLength))
-        {
-            float distToGround = transform.position.y - hit.point.y;
-            
-            // If we're floating above ground, snap down
-            if (distToGround > 0.05f && distToGround < 3f && verticalVelocity <= 0f)
-            {
-                Vector3 pos = transform.position;
-                pos.y = Mathf.Lerp(pos.y, hit.point.y, 10f * Time.deltaTime);
-                transform.position = pos;
-                isGrounded = true;
-            }
         }
 
-        if (isGrounded && verticalVelocity < 0f)
-        {
-            verticalVelocity = -2f;
-        }
+        Vector3 camForward = cameraTransform.forward;
+        Vector3 camRight   = cameraTransform.right;
+        camForward.y = 0f;
+        camRight.y   = 0f;
+        camForward.Normalize();
+        camRight.Normalize();
 
-        // --- Read input ---
-        float horizontal = 0f;
-        float vertical = 0f;
+        Vector3 moveDirection = camForward * moveInput.y + camRight * moveInput.x;
 
-        if (Keyboard.current.wKey.isPressed || Keyboard.current.upArrowKey.isPressed) vertical += 1f;
-        if (Keyboard.current.sKey.isPressed || Keyboard.current.downArrowKey.isPressed) vertical -= 1f;
-        if (Keyboard.current.dKey.isPressed || Keyboard.current.rightArrowKey.isPressed) horizontal += 1f;
-        if (Keyboard.current.aKey.isPressed || Keyboard.current.leftArrowKey.isPressed) horizontal -= 1f;
+        rb.linearVelocity = new Vector3(
+            moveDirection.x * currentSpeed,
+            rb.linearVelocity.y,
+            moveDirection.z * currentSpeed
+        );
 
-        Vector3 inputDir = new Vector3(horizontal, 0f, vertical).normalized;
-        bool isMoving = inputDir.magnitude >= 0.1f;
-        bool isSprinting = Keyboard.current.leftShiftKey.isPressed;
+        Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
+        transform.rotation = Quaternion.Slerp(
+            transform.rotation,
+            targetRotation,
+            rotationSpeed * Time.fixedDeltaTime
+        );
+    }
 
-        // --- Calculate movement ---
-        Vector3 horizontalMove = Vector3.zero;
+    void UpdateAnimator()
+    {
+        if (animator == null) return;
 
-        if (isMoving)
-        {
-            // Get camera-relative directions (flatten to horizontal plane)
-            Vector3 camForward = cameraTransform.forward;
-            Vector3 camRight = cameraTransform.right;
-            camForward.y = 0f;
-            camRight.y = 0f;
-            camForward.Normalize();
-            camRight.Normalize();
+        bool isSprinting = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
 
-            Vector3 moveDirection = (camForward * inputDir.z + camRight * inputDir.x).normalized;
+        float speed = 0f;
+        if (moveInput.magnitude > 0.1f)
+            speed = isSprinting ? 2f : 1f;  // 0 = idle, 1 = walk, 2 = run
 
-            float speed = isSprinting ? sprintSpeed : moveSpeed;
-            horizontalMove = moveDirection * speed;
+        // Smooth the blend tree transition
+        float currentSpeed = animator.GetFloat("Speed");
+        float smoothed = Mathf.Lerp(currentSpeed, speed, Time.deltaTime * 8f);
+        animator.SetFloat("Speed", smoothed);
+    }
 
-            // Rotate character to face movement direction
-            if (moveDirection != Vector3.zero)
-            {
-                Quaternion targetRot = Quaternion.LookRotation(moveDirection) * Quaternion.Euler(0f, 180f, 0f);
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, rotationSpeed * Time.deltaTime);
-            }
+    void CheckGround()
+    {
+        isGrounded = Physics.Raycast(
+            transform.position + Vector3.up * 0.1f,
+            Vector3.down,
+            groundCheckDistance + 0.1f,
+            groundMask
+        );
+    }
 
-            if (showDebugLogs)
-            {
-                Debug.Log($"[PlayerMovement] Moving: dir={moveDirection}, speed={speed}, pos={transform.position}");
-            }
-        }
-
-        // --- Jump ---
-        if (Keyboard.current.spaceKey.wasPressedThisFrame && isGrounded)
-        {
-            verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * gravity);
-        }
-
-        // --- Apply gravity ---
-        verticalVelocity += gravity * Time.deltaTime;
-
-        // --- SINGLE Move call combining horizontal + vertical ---
-        Vector3 finalMove = horizontalMove + Vector3.up * verticalVelocity;
-        controller.Move(finalMove * Time.deltaTime);
-
-        // --- Hardcoded floor clamp: never fall below Y = -116 ---
-        if (transform.position.y < -116f)
-        {
-            Vector3 pos = transform.position;
-            pos.y = -116f;
-            transform.position = pos;
-            verticalVelocity = 0f;
-        }
-
-        // --- Animation ---
-        float targetAnimSpeed = isMoving ? (isSprinting ? 1f : 0.5f) : 0f;
-        currentAnimSpeed = Mathf.MoveTowards(currentAnimSpeed, targetAnimSpeed, Time.deltaTime / animationSmoothTime);
-        if (animator != null)
-        {
-            animator.SetFloat("Speed", currentAnimSpeed);
-        }
+    // Visualise ground check in editor
+    void OnDrawGizmosSelected()
+    {
+        Gizmos.color = isGrounded ? Color.green : Color.red;
+        Gizmos.DrawLine(
+            transform.position + Vector3.up * 0.1f,
+            transform.position + Vector3.up * 0.1f + Vector3.down * (groundCheckDistance + 0.1f)
+        );
     }
 }
