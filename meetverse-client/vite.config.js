@@ -1,21 +1,3 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-
-export default defineConfig({
-  plugins: [react()],
-  server: {
-    headers: {
-      "Cross-Origin-Opener-Policy": "same-origin",
-      "Cross-Origin-Embedder-Policy": "require-corp",
-      "Cache-Control": "no-cache",
-    }
-  },
-  configureServer(server) {
-    server.middlewares.use((req, res, next) => {
-      if (req.url.endsWith(".data") || req.url.endsWith(".wasm") || req.url.endsWith(".symbols.json")) {
-        res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-      }
-      next();
-    });
-  }
-})
+version https://git-lfs.github.com/spec/v1
+oid sha256:eae550dc0797414f3d3417175410490f9193c4c4e295232db95eb75e8acc975b
+size 605
