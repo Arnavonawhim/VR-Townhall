@@ -2,13 +2,14 @@ import { useEffect, useState } from "react";
 import { Unity, useUnityContext } from "react-unity-webgl";
 
 export default function UnityEmbed({ onExit }) {
-  const { unityProvider, isLoaded, loadingProgression } = useUnityContext({
-    loaderUrl:    "/unity/Build/Meetverse.loader.js",
-    dataUrl:      "/unity/Build/Meetverse.data.gz",
-    frameworkUrl: "/unity/Build/Meetverse.framework.js.gz",
-    codeUrl:      "/unity/Build/Meetverse.wasm.gz",
-  });
+  const UNITY_URL = "https://pub-cacca82a567344458962d14fa504e338.r2.dev";
 
+  const { unityProvider, isLoaded, loadingProgression } = useUnityContext({
+    loaderUrl: `${UNITY_URL}/Meetverse.loader.js`,
+    dataUrl: `${UNITY_URL}/Meetverse.data`,
+    frameworkUrl: `${UNITY_URL}/Meetverse.framework.js`,
+    codeUrl: `${UNITY_URL}/Meetverse.wasm`,
+  });
   const loadPercent = Math.round(loadingProgression * 100);
 
   return (
