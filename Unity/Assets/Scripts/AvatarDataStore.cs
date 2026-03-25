@@ -16,6 +16,14 @@ public static class AvatarDataStore
     // Whether data has been saved (so we don't apply empty data)
     public static bool HasData = false;
 
+    /// <summary>
+    /// Returns a copy of all stored avatar data for network sync.
+    /// </summary>
+    public static Dictionary<string, string> GetAllData()
+    {
+        return new Dictionary<string, string>(activeChildren);
+    }
+
     // The category names that we look for under the Idle object
     private static readonly string[] categories = { "hair", "clothes", "beard", "accesories", "shoes" };
 

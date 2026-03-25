@@ -1,38 +1,68 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+/// <summary>
+/// Saves avatar customization state and loads SpawnArea scene.
+/// Attach to a GameObject in the avatar customization scene.
+/// Wire the "Done" button to LoadSpawnArea().
+/// </summary>
 public class SceneLoader : MonoBehaviour
 {
-    public int sceneIndex = 1;
-
-    [Header("Avatar Root (the 'Idle' object)")]
-    [Tooltip("Drag the Idle transform here so we can save its state before loading.")]
-    public Transform avatarRoot;
+    [Tooltip("The root Idle transform of the avatar being customized. If null, auto-searches the scene.")]
+    public Transform idleTransform;
 
     /// <summary>
-    /// Saves the avatar customization state, then loads the next scene.
-    /// Hook the "Complete" button's OnClick to this method.
+    /// Called by the Done button — saves avatar data then loads SpawnArea.
     /// </summary>
-    public void SaveAndLoadScene()
+    public void LoadSpawnArea()
     {
-        if (avatarRoot != null)
+        // Auto-find the Idle transform if not assigned in Inspector
+        if (idleTransform == null)
         {
-            AvatarDataStore.SaveFromAvatar(avatarRoot);
-            Debug.Log("[SceneLoader] Avatar state saved. Loading scene index: " + sceneIndex);
+            // Search for an object named "Idle" or containing "Idle" in the scene
+            GameObject[] roots = SceneManager.GetActiveScene().GetRootGameObjects();
+            foreach (GameObject root in roots)
+            {
+                Transform found = FindIdleRecursive(root.transform);
+                if (found != null)
+                {
+                    idleTransform = found;
+                    break;
+                }
+            }
+        }
+
+        if (idleTransform != null)
+        {
+            AvatarDataStore.SaveFromAvatar(idleTransform);
+            Debug.Log("[SceneLoader] Avatar data saved, loading SpawnArea...");
         }
         else
         {
-            Debug.LogWarning("[SceneLoader] avatarRoot is not assigned! Avatar state will NOT be saved.");
+            Debug.LogWarning("[SceneLoader] Could not find Idle transform — avatar data not saved!");
         }
 
-        SceneManager.LoadScene(sceneIndex);
+        SceneManager.LoadScene("SpawnArea");
     }
 
     /// <summary>
-    /// Loads the scene without saving avatar state (original behavior).
+    /// Backwards-compatible method — redirects to LoadSpawnArea.
     /// </summary>
-    public void LoadSceneByIndex()
+    public void LoadSceneOne()
     {
-        SceneManager.LoadScene(sceneIndex);
+        LoadSpawnArea();
+    }
+
+    Transform FindIdleRecursive(Transform parent)
+    {
+        if (parent.name.StartsWith("Idle"))
+            return parent;
+
+        foreach (Transform child in parent)
+        {
+            Transform result = FindIdleRecursive(child);
+            if (result != null) return result;
+        }
+        return null;
     }
 }
