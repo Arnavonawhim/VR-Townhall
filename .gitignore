@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 node_modules/
 .env
 *.log
@@ -5,6 +6,8 @@ node_modules/
 uploads/
 
 
+=======
+>>>>>>> origin/Arnav
 ############################
 # Unity Generated Folders
 ############################
