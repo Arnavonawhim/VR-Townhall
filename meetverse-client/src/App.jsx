@@ -1499,6 +1499,21 @@ function MainDashboard({ user, setUser, onLogout, onJoinRoom }) {
   const [editingName, setEditingName] = useState(false);
   const [tempName, setTempName] = useState(user?.name || "");
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showJoinCodeModal, setShowJoinCodeModal] = useState(false);
+  const [rooms, setRooms] = useState([]);
+  const [loadingRooms, setLoadingRooms] = useState(true);
+  const [passwordPrompt, setPasswordPrompt] = useState(null);
+  const [passwordInput, setPasswordInput] = useState("");
+  const [passwordErr, setPasswordErr] = useState("");
+
+  // Room creation form state
+  const [newRoom, setNewRoom] = useState({ name: "", type: "auditorium", visibility: "public", password: "" });
+  const [createErr, setCreateErr] = useState("");
+  const [creating, setCreating] = useState(false);
+
+  // Join by code
+  const [joinCodeInput, setJoinCodeInput] = useState("");
 
   const handleSaveName = () => {
     const updatedUser = { ...user, name: tempName };
@@ -1507,9 +1522,82 @@ function MainDashboard({ user, setUser, onLogout, onJoinRoom }) {
     setEditingName(false);
   };
 
-  // Close profile menu if clicked outside loosely (or just toggle on icon)
+  // Fetch rooms from backend
+  const fetchRooms = async () => {
+    try {
+      const data = await apiGet("/rooms");
+      if (data.success) setRooms(data.rooms || []);
+    } catch (e) { console.error("Failed to fetch rooms:", e); }
+    setLoadingRooms(false);
+  };
+
+  useEffect(() => {
+    fetchRooms();
+    const interval = setInterval(fetchRooms, 8000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Create room handler
+  const handleCreateRoom = async () => {
+    if (!newRoom.name.trim()) { setCreateErr("Room name is required."); return; }
+    if (newRoom.visibility === "private" && !newRoom.password.trim()) { setCreateErr("Password required for private rooms."); return; }
+    setCreating(true); setCreateErr("");
+    try {
+      const body = { ...newRoom, creatorName: user?.name || "Host" };
+      const data = await apiAuth("/rooms", body);
+      if (data.success) {
+        setShowCreateModal(false);
+        setNewRoom({ name: "", type: "auditorium", visibility: "public", password: "" });
+        onJoinRoom({ roomId: data.room._id, type: data.room.type, isHost: true });
+      } else { setCreateErr(data.error?.message || data.message || "Failed to create room."); }
+    } catch { setCreateErr("Network error."); }
+    setCreating(false);
+  };
+
+  // Join room handler (from list)
+  const handleJoinRoom = async (room) => {
+    if (room.visibility === "private") {
+      setPasswordPrompt(room);
+      setPasswordInput("");
+      setPasswordErr("");
+      return;
+    }
+    try {
+      const data = await apiAuth(`/rooms/${room._id}/join`, { username: user?.name });
+      if (data.success) {
+        onJoinRoom({ roomId: room._id, relayJoinCode: data.room.relayJoinCode, type: data.room.type, isHost: false });
+      }
+    } catch { alert("Failed to join room."); }
+  };
+
+  // Submit password for private room
+  const handlePasswordJoin = async () => {
+    if (!passwordInput.trim()) { setPasswordErr("Enter the room password."); return; }
+    try {
+      const data = await apiAuth(`/rooms/${passwordPrompt._id}/join`, { username: user?.name, password: passwordInput });
+      if (data.success) {
+        setPasswordPrompt(null);
+        onJoinRoom({ roomId: passwordPrompt._id, relayJoinCode: data.room.relayJoinCode, type: data.room.type, isHost: false });
+      } else { setPasswordErr(data.error?.message || data.message || "Incorrect password."); }
+    } catch { setPasswordErr("Network error."); }
+  };
+
+  const roomTypeLabels = { auditorium: "Auditorium", classroom: "Classroom", big_auditorium: "Big Auditorium" };
+  const roomTypeIcons = {
+    auditorium: <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>,
+    classroom: <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>,
+    big_auditorium: <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M2 7l10-4 10 4-10 4z"/><path d="M4 9v6c0 2 3.6 4 8 4s8-2 8-4V9"/></svg>,
+  };
+
+  const modalBg = { position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 };
+  const modalBox = { background: '#fff', borderRadius: 12, padding: 32, maxWidth: 480, width: '90%', boxShadow: '0 8px 32px rgba(0,0,0,0.15)' };
+  const inputStyle = { width: '100%', padding: '10px 14px', border: '1px solid #e1e4e8', borderRadius: 6, fontSize: 14, outline: 'none', boxSizing: 'border-box' };
+  const btnPrimary = { background: '#131B2E', color: '#fff', border: 'none', borderRadius: 6, padding: '12px 24px', fontSize: 15, fontWeight: 600, cursor: 'pointer', width: '100%' };
+  const btnAccent = { ...btnPrimary, background: '#9D75CB' };
+
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: '#f5f7fa', color: '#131B2E', fontFamily: 'Inter, sans-serif' }}>
+      {/* Top Navbar */}
       <div style={{ position: 'fixed', top: 0, left: 0, right: 0, height: 60, background: '#131B2E', display: 'flex', alignItems: 'center', padding: '0 32px', zIndex: 10, justifyContent: 'space-between', borderBottom: '1px solid #2A3A5C' }}>
         <div style={{ display: 'flex', alignItems: 'baseline', gap: 12 }}>
           <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 24, letterSpacing: '0.05em', color: '#fff' }}>MEETVERSE</div>
@@ -1517,16 +1605,10 @@ function MainDashboard({ user, setUser, onLogout, onJoinRoom }) {
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
           <button style={{ background: '#9D75CB', color: '#fff', border: 'none', padding: '8px 16px', borderRadius: 4, cursor: 'pointer', fontWeight: 600, fontSize: 13 }}>Update avatar</button>
-          
           <div style={{ position: 'relative' }}>
-            <div 
-              style={{ width: 32, height: 32, borderRadius: '50%', border: '2px solid #fff', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', cursor: 'pointer' }} 
-              onClick={() => setShowProfileMenu(!showProfileMenu)} 
-              title="Profile"
-            >
+            <div style={{ width: 32, height: 32, borderRadius: '50%', border: '2px solid #fff', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', cursor: 'pointer' }} onClick={() => setShowProfileMenu(!showProfileMenu)} title="Profile">
                <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
             </div>
-            
             {showProfileMenu && (
               <div style={{ position: 'absolute', top: 40, right: 0, background: '#1E2D4A', border: '1px solid #2A3A5C', borderRadius: 6, padding: '16px', boxShadow: '0 4px 12px rgba(0,0,0,0.2)', minWidth: 160, display: 'flex', flexDirection: 'column', gap: 12 }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
@@ -1569,34 +1651,49 @@ function MainDashboard({ user, setUser, onLogout, onJoinRoom }) {
         {/* Main Content Area */}
         <div style={{ flex: 1, padding: '40px 60px', background: '#ffffff', marginLeft: 300 }}>
           
+          {/* Action Buttons */}
           <div style={{ display: 'flex', gap: 24, marginBottom: 40, border: '1px solid #e1e4e8', padding: 24, borderRadius: 8, background: '#fff' }}>
-            <button onClick={onJoinRoom} style={{ flex: 1, background: '#131B2E', color: 'white', border: 'none', borderRadius: 6, padding: '20px 0', fontSize: 18, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12, transition: 'opacity 0.2s' }} onMouseOver={e=>e.currentTarget.style.opacity=0.9} onMouseOut={e=>e.currentTarget.style.opacity=1}>
+            <button onClick={() => setShowJoinCodeModal(true)} style={{ flex: 1, background: '#131B2E', color: 'white', border: 'none', borderRadius: 6, padding: '20px 0', fontSize: 18, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12, transition: 'opacity 0.2s' }} onMouseOver={e=>e.currentTarget.style.opacity=0.9} onMouseOut={e=>e.currentTarget.style.opacity=1}>
               <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
               Join Room
             </button>
-            <button onClick={onJoinRoom} style={{ flex: 1, background: '#9D75CB', color: 'white', border: 'none', borderRadius: 6, padding: '20px 0', fontSize: 18, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12, transition: 'opacity 0.2s' }} onMouseOver={e=>e.currentTarget.style.opacity=0.9} onMouseOut={e=>e.currentTarget.style.opacity=1}>
+            <button onClick={() => setShowCreateModal(true)} style={{ flex: 1, background: '#9D75CB', color: 'white', border: 'none', borderRadius: 6, padding: '20px 0', fontSize: 18, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12, transition: 'opacity 0.2s' }} onMouseOver={e=>e.currentTarget.style.opacity=0.9} onMouseOut={e=>e.currentTarget.style.opacity=1}>
               <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
               Create Room
             </button>
           </div>
 
-          <h2 style={{ fontSize: 20, fontWeight: 700, color: '#131B2E', marginBottom: 20 }}>Active Public Meeting Rooms</h2>
+          <h2 style={{ fontSize: 20, fontWeight: 700, color: '#131B2E', marginBottom: 20 }}>Active Meeting Rooms</h2>
 
+          {/* Room List */}
           <div style={{ border: '1px solid #e1e4e8', borderRadius: 8, overflow: 'hidden', background: '#fff' }}>
-            {[1,2,3,4].map((i) => (
-              <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '24px', borderBottom: i < 4 ? '1px solid #e1e4e8' : 'none' }}>
-                <div>
-                  <h3 style={{ fontSize: 18, fontWeight: 700, color: '#131B2E', margin: '0 0 8px 0' }}>meeting room {i}</h3>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#8B95A8', fontSize: 14, fontWeight: 600 }}>
-                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
-                    24 users
+            {loadingRooms ? (
+              <div style={{ padding: 40, textAlign: 'center', color: '#8B95A8' }}>Loading rooms...</div>
+            ) : rooms.length === 0 ? (
+              <div style={{ padding: 40, textAlign: 'center', color: '#8B95A8' }}>No active rooms. Create one to get started!</div>
+            ) : rooms.map((room, idx) => (
+              <div key={room._id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px 24px', borderBottom: idx < rooms.length - 1 ? '1px solid #e1e4e8' : 'none' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                  <div style={{ width: 40, height: 40, borderRadius: 8, background: '#f0f2f5', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#131B2E' }}>
+                    {roomTypeIcons[room.type] || roomTypeIcons.auditorium}
+                  </div>
+                  <div>
+                    <h3 style={{ fontSize: 16, fontWeight: 700, color: '#131B2E', margin: '0 0 4px 0', display: 'flex', alignItems: 'center', gap: 8 }}>
+                      {room.name}
+                      {room.visibility === 'private' && <span style={{ fontSize: 12, color: '#8B95A8' }} title="Private Room">🔒</span>}
+                    </h3>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12, color: '#8B95A8', fontSize: 13 }}>
+                      <span style={{ background: '#f0f2f5', padding: '2px 8px', borderRadius: 4, fontSize: 11, fontWeight: 600, textTransform: 'uppercase' }}>{roomTypeLabels[room.type] || room.type}</span>
+                      <span>by {room.creatorName || "Unknown"}</span>
+                      <span>·</span>
+                      <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                      <span>{room.playerCount || room.players?.length || 0}/{room.maxPlayers || 50}</span>
+                    </div>
                   </div>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 12 }}>
-                  <button onClick={onJoinRoom} style={{ background: '#131B2E', color: 'white', border: 'none', borderRadius: 4, padding: '8px 32px', fontSize: 14, fontWeight: 600, cursor: 'pointer', transition: 'background 0.2s' }} onMouseOver={e=>e.currentTarget.style.background='#1A2744'} onMouseOut={e=>e.currentTarget.style.background='#131B2E'}>
-                    Join
-                  </button>
-                </div>
+                <button onClick={() => handleJoinRoom(room)} style={{ background: '#131B2E', color: 'white', border: 'none', borderRadius: 4, padding: '8px 28px', fontSize: 14, fontWeight: 600, cursor: 'pointer', transition: 'background 0.2s' }} onMouseOver={e=>e.currentTarget.style.background='#1A2744'} onMouseOut={e=>e.currentTarget.style.background='#131B2E'}>
+                  Join
+                </button>
               </div>
             ))}
           </div>
@@ -1604,20 +1701,106 @@ function MainDashboard({ user, setUser, onLogout, onJoinRoom }) {
           <div style={{ textAlign: 'center', marginTop: 40, color: '#8B95A8', fontSize: 13 }}>
             © {new Date().getFullYear()} Meetverse. All rights reserved.
           </div>
-
         </div>
       </div>
+
+      {/* ====== CREATE ROOM MODAL ====== */}
+      {showCreateModal && (
+        <div style={modalBg} onClick={e => e.target === e.currentTarget && setShowCreateModal(false)}>
+          <div style={modalBox}>
+            <h2 style={{ fontSize: 22, fontWeight: 700, margin: '0 0 8px 0' }}>Create Room</h2>
+            <p style={{ color: '#8B95A8', fontSize: 14, margin: '0 0 24px 0' }}>Set up a virtual meeting space for your audience.</p>
+            {createErr && <div style={{ background: '#fef2f2', color: '#dc2626', padding: '10px 14px', borderRadius: 6, fontSize: 13, marginBottom: 16 }}>{createErr}</div>}
+            
+            <div style={{ marginBottom: 16 }}>
+              <label style={{ fontSize: 13, fontWeight: 600, color: '#131B2E', display: 'block', marginBottom: 6 }}>Room Name</label>
+              <input value={newRoom.name} onChange={e => setNewRoom(p => ({...p, name: e.target.value}))} placeholder="e.g. Town Hall Q4 Review" style={inputStyle} />
+            </div>
+
+            <div style={{ marginBottom: 16 }}>
+              <label style={{ fontSize: 13, fontWeight: 600, color: '#131B2E', display: 'block', marginBottom: 6 }}>Room Type</label>
+              <div style={{ display: 'flex', gap: 8 }}>
+                {["auditorium", "classroom", "big_auditorium"].map(t => (
+                  <button key={t} onClick={() => setNewRoom(p => ({...p, type: t}))} style={{ flex: 1, padding: '12px 8px', border: newRoom.type === t ? '2px solid #9D75CB' : '1px solid #e1e4e8', borderRadius: 8, background: newRoom.type === t ? 'rgba(157,117,203,0.08)' : '#fff', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, transition: 'all 0.2s' }}>
+                    <div style={{ color: newRoom.type === t ? '#9D75CB' : '#8B95A8' }}>{roomTypeIcons[t]}</div>
+                    <span style={{ fontSize: 12, fontWeight: 600, color: newRoom.type === t ? '#9D75CB' : '#131B2E' }}>{roomTypeLabels[t]}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div style={{ marginBottom: 16 }}>
+              <label style={{ fontSize: 13, fontWeight: 600, color: '#131B2E', display: 'block', marginBottom: 6 }}>Visibility</label>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <button onClick={() => setNewRoom(p => ({...p, visibility: "public"}))} style={{ flex: 1, padding: '10px', border: newRoom.visibility === "public" ? '2px solid #131B2E' : '1px solid #e1e4e8', borderRadius: 6, background: newRoom.visibility === "public" ? '#131B2E' : '#fff', color: newRoom.visibility === "public" ? '#fff' : '#131B2E', cursor: 'pointer', fontWeight: 600, fontSize: 13 }}>🌐 Public</button>
+                <button onClick={() => setNewRoom(p => ({...p, visibility: "private"}))} style={{ flex: 1, padding: '10px', border: newRoom.visibility === "private" ? '2px solid #131B2E' : '1px solid #e1e4e8', borderRadius: 6, background: newRoom.visibility === "private" ? '#131B2E' : '#fff', color: newRoom.visibility === "private" ? '#fff' : '#131B2E', cursor: 'pointer', fontWeight: 600, fontSize: 13 }}>🔒 Private</button>
+              </div>
+            </div>
+
+            {newRoom.visibility === "private" && (
+              <div style={{ marginBottom: 16 }}>
+                <label style={{ fontSize: 13, fontWeight: 600, color: '#131B2E', display: 'block', marginBottom: 6 }}>Room Password</label>
+                <input type="password" value={newRoom.password} onChange={e => setNewRoom(p => ({...p, password: e.target.value}))} placeholder="Set a password for joining" style={inputStyle} />
+              </div>
+            )}
+
+            <div style={{ display: 'flex', gap: 12, marginTop: 24 }}>
+              <button onClick={() => setShowCreateModal(false)} style={{ flex: 1, padding: '12px', border: '1px solid #e1e4e8', borderRadius: 6, background: '#fff', cursor: 'pointer', fontWeight: 600, fontSize: 14, color: '#131B2E' }}>Cancel</button>
+              <button onClick={handleCreateRoom} disabled={creating} style={btnAccent}>{creating ? "Creating..." : "Create Room →"}</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ====== JOIN BY CODE MODAL ====== */}
+      {showJoinCodeModal && (
+        <div style={modalBg} onClick={e => e.target === e.currentTarget && setShowJoinCodeModal(false)}>
+          <div style={modalBox}>
+            <h2 style={{ fontSize: 22, fontWeight: 700, margin: '0 0 8px 0' }}>Join Room</h2>
+            <p style={{ color: '#8B95A8', fontSize: 14, margin: '0 0 24px 0' }}>Enter the Room ID shared by the host to join their session.</p>
+            <input value={joinCodeInput} onChange={e => setJoinCodeInput(e.target.value)} placeholder="Paste Room ID here" style={{ ...inputStyle, marginBottom: 16 }} />
+            <div style={{ display: 'flex', gap: 12 }}>
+              <button onClick={() => setShowJoinCodeModal(false)} style={{ flex: 1, padding: '12px', border: '1px solid #e1e4e8', borderRadius: 6, background: '#fff', cursor: 'pointer', fontWeight: 600, fontSize: 14, color: '#131B2E' }}>Cancel</button>
+              <button onClick={async () => {
+                if (!joinCodeInput.trim()) return;
+                try {
+                  const data = await apiGet(`/rooms/${joinCodeInput.trim()}`);
+                  if (data.success) { setShowJoinCodeModal(false); handleJoinRoom(data.room); }
+                  else alert(data.error?.message || "Room not found.");
+                } catch { alert("Room not found."); }
+              }} style={btnPrimary}>Join →</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ====== PASSWORD PROMPT MODAL ====== */}
+      {passwordPrompt && (
+        <div style={modalBg} onClick={e => e.target === e.currentTarget && setPasswordPrompt(null)}>
+          <div style={modalBox}>
+            <h2 style={{ fontSize: 22, fontWeight: 700, margin: '0 0 8px 0' }}>🔒 Private Room</h2>
+            <p style={{ color: '#8B95A8', fontSize: 14, margin: '0 0 8px 0' }}>Enter the password to join <strong style={{ color: '#131B2E' }}>{passwordPrompt.name}</strong></p>
+            {passwordErr && <div style={{ background: '#fef2f2', color: '#dc2626', padding: '10px 14px', borderRadius: 6, fontSize: 13, marginBottom: 12 }}>{passwordErr}</div>}
+            <input type="password" value={passwordInput} onChange={e => setPasswordInput(e.target.value)} onKeyDown={e => e.key === "Enter" && handlePasswordJoin()} placeholder="Room password" style={{ ...inputStyle, marginBottom: 16 }} autoFocus />
+            <div style={{ display: 'flex', gap: 12 }}>
+              <button onClick={() => setPasswordPrompt(null)} style={{ flex: 1, padding: '12px', border: '1px solid #e1e4e8', borderRadius: 6, background: '#fff', cursor: 'pointer', fontWeight: 600, fontSize: 14, color: '#131B2E' }}>Cancel</button>
+              <button onClick={handlePasswordJoin} style={btnPrimary}>Join →</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
 export default function App() {
   const [modal, setModal] = useState(null);
-  const [appState, setAppState] = useState("landing"); // 'landing' | 'customizer' | 'dashboard' | 'multiplayer'
+  const [appState, setAppState] = useState("landing");
   const [user, setUser] = useState(() => {
     try { return JSON.parse(localStorage.getItem("nv_user")); } catch { return null; }
   });
   const [avatarData, setAvatarData] = useState(null);
+  const [roomData, setRoomData] = useState(null);
 
   useEffect(() => {
     // Expose dispatchReactEvent globally so Unity JSLib can call it
@@ -1626,18 +1809,30 @@ export default function App() {
       window.dispatchEvent(event);
     };
 
+    // Unity fires this when avatar customization is done
     const handleAvatarComplete = (e) => {
       console.log("AvatarComplete event received:", e.detail);
       setAvatarData(e.detail);
       setAppState("dashboard");
     };
 
+    // Unity fires this after host allocates relay — save the join code to backend
+    const handleRelayCode = async (e) => {
+      const relayJoinCode = e.detail;
+      console.log("RelayCodeReady received:", relayJoinCode);
+      if (roomData?.roomId && relayJoinCode) {
+        await apiAuth(`/rooms/${roomData.roomId}/relay`, { relayJoinCode }, "PATCH");
+      }
+    };
+
     window.addEventListener("AvatarComplete", handleAvatarComplete);
+    window.addEventListener("RelayCodeReady", handleRelayCode);
     return () => {
       delete window.dispatchReactEvent;
       window.removeEventListener("AvatarComplete", handleAvatarComplete);
+      window.removeEventListener("RelayCodeReady", handleRelayCode);
     };
-  }, []);
+  }, [roomData]);
 
   function onSuccess(u) { setUser(u); setModal(null); }
   function onLogout() {
@@ -1645,6 +1840,21 @@ export default function App() {
     localStorage.removeItem("nv_user");
     setUser(null);
     setAppState("landing");
+  }
+
+  // Called when user creates or joins a room from the dashboard
+  function handleEnterRoom(data) {
+    setRoomData(data);
+    setAppState("multiplayer");
+  }
+
+  // Called when user exits a multiplayer room back to dashboard
+  async function handleLeaveRoom() {
+    if (roomData?.roomId) {
+      try { await apiAuth(`/rooms/${roomData.roomId}/leave`, {}); } catch {}
+    }
+    setRoomData(null);
+    setAppState("dashboard");
   }
 
   return (
@@ -1655,7 +1865,8 @@ export default function App() {
         <UnityEmbed 
            mode={appState} 
            avatarData={avatarData}
-           onExit={() => setAppState(appState === "multiplayer" ? "dashboard" : "landing")} 
+           roomData={roomData}
+           onExit={() => appState === "multiplayer" ? handleLeaveRoom() : setAppState("landing")} 
         />
       )}
       
@@ -1686,7 +1897,7 @@ export default function App() {
            user={user} 
            setUser={setUser}
            onLogout={onLogout} 
-           onJoinRoom={() => setAppState("multiplayer")} 
+           onJoinRoom={handleEnterRoom} 
         />
       )}
     </>
