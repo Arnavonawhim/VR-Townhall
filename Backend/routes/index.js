@@ -5,6 +5,7 @@ import askRoutes from './askRoutes.js';
 import avatarRoutes from './avatarRoutes.js';
 import audioRoutes from './audioRoutes.js';
 import docsRoutes from './docsRoutes.js';
+import roomRoutes from './roomRoutes.js';
 
 const router = Router();
 
@@ -14,6 +15,7 @@ router.use('/documents', documentRoutes);
 router.use('/ask', askRoutes);
 router.use('/avatars', avatarRoutes);
 router.use('/audio', audioRoutes);
+router.use('/rooms', roomRoutes);
 
 router.get('/health', (req, res) => {
   res.json({

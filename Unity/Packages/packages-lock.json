@@ -1,7 +1,5 @@
 {
   "dependencies": {
-<<<<<<< HEAD
-=======
     "com.unity.2d.sprite": {
       "version": "1.0.0",
       "depth": 0,
@@ -129,7 +127,6 @@
       "dependencies": {},
       "url": "https://packages.unity.com"
     },
->>>>>>> origin/Arnav
     "com.unity.multiplayer.center": {
       "version": "1.0.1",
       "depth": 0,
@@ -138,8 +135,6 @@
         "com.unity.modules.uielements": "1.0.0"
       }
     },
-<<<<<<< HEAD
-=======
     "com.unity.multiplayer.center.quickstart": {
       "version": "1.1.1",
       "depth": 0,
@@ -425,7 +420,6 @@
       },
       "url": "https://packages.unity.com"
     },
->>>>>>> origin/Arnav
     "com.unity.modules.accessibility": {
       "version": "1.0.0",
       "depth": 0,
@@ -489,11 +483,7 @@
     },
     "com.unity.modules.hierarchycore": {
       "version": "1.0.0",
-<<<<<<< HEAD
-      "depth": 1,
-=======
       "depth": 0,
->>>>>>> origin/Arnav
       "source": "builtin",
       "dependencies": {}
     },
@@ -543,11 +533,7 @@
     },
     "com.unity.modules.subsystems": {
       "version": "1.0.0",
-<<<<<<< HEAD
-      "depth": 1,
-=======
       "depth": 0,
->>>>>>> origin/Arnav
       "source": "builtin",
       "dependencies": {
         "com.unity.modules.jsonserialize": "1.0.0"

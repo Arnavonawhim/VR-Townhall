@@ -33,6 +33,16 @@ There will be a rag chatbot built from langchain to accomodate viewer's question
 ### multilingual support
 -theres a node api for stt we will use that to create text from organiser speech and then convert to required language and show it as subtitles
 
+### Current Architecture & React-Unity Bridge Flow (Already Implemented)
+- **App Routing (React)**: The state flows through `landing` -> `customizer` -> `dashboard` -> `multiplayer`.
+- **Unity Optimization**: To avoid slow WebGL reloading, `UnityEmbed.jsx` stays mounted in the DOM across UI states. 
+- **Avatar Setup to Dashboard Flow**:
+  1. User customises their avatar in Unity (Customizer scene).
+  2. Clicking "Complete" triggers `SceneLoader.SaveAndLoadScene()`, which saves the avatar choices to `AvatarDataStore` cache and fires a JSLib event `NotifyAvatarComplete` to React (`window.dispatchReactEvent`).
+  3. React intercepts this event, saves the avatar JSON data in state, and transitions to the `dashboard` UI.
+  4. React uses CSS to smoothly shrink and reposition the WebGL Canvas into a 120x120px circular overlay on the sidebar.
+  5. Concurrently, React calls `sendMessage("SceneLoader", "LoadDashboardScene")`. Unity loads `DashboardAvatarScene`, and a script called `DashboardAvatarManager.cs` automatically reads `AvatarDataStore` and applies the custom clothes to the avatar, resulting in a seamless 3D UI widget.
+- **Frontend Theme**: Strict dark navy (`#131B2E`) and purple (`#9D75CB`) formal styling across all React components.
 
 ### Things claude should follow 
 -- check existing code first before creating new code 

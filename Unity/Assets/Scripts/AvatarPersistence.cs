@@ -1,11 +1,6 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
-/// <summary>
-/// Legacy avatar persistence — no longer uses DontDestroyOnLoad since
-/// NetworkManager handles player spawning in multiplayer scenes.
-/// Avatar data is stored in the static AvatarDataStore which persists between scenes.
-/// This script is kept for backwards compatibility but is no longer needed.
-/// </summary>
 public class AvatarPersistence : MonoBehaviour
 {
     public static AvatarPersistence Instance;
@@ -17,8 +12,29 @@ public class AvatarPersistence : MonoBehaviour
             Destroy(gameObject);
             return;
         }
+
         Instance = this;
-        // DontDestroyOnLoad removed — conflicts with NetworkManager player spawning.
-        // Avatar data is now stored in static AvatarDataStore.
+        DontDestroyOnLoad(gameObject);
+    }
+
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        PlayerSpawnPoint spawnPoint = FindObjectOfType<PlayerSpawnPoint>();
+
+        if (spawnPoint != null)
+        {
+            transform.position = spawnPoint.transform.position;
+            transform.rotation = spawnPoint.transform.rotation;
+        }
     }
 }
