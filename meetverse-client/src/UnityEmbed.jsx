@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Unity, useUnityContext } from "react-unity-webgl";
 
-export default function UnityEmbed({ mode, avatarData, onExit }) {
+export default function UnityEmbed({ mode, avatarData, roomData, onExit }) {
   const UNITY_URL = "https://pub-cacca82a567344458962d14fa504e338.r2.dev";
 
   const { unityProvider, isLoaded, loadingProgression, sendMessage } = useUnityContext({
@@ -19,12 +19,25 @@ export default function UnityEmbed({ mode, avatarData, onExit }) {
     if (mode === "dashboard") {
       console.log("Sending LoadDashboardScene to Unity...");
       sendMessage("SceneLoader", "LoadDashboardScene");
-    } else if (mode === "multiplayer" && !hasBootstrapped) {
-      console.log("Sending StartMultiplayer to Unity with data:", avatarData);
-      sendMessage("WebBootstrapper", "StartMultiplayer", avatarData || "");
+      setHasBootstrapped(false);
+    } else if (mode === "multiplayer" && !hasBootstrapped && roomData) {
+      const payload = JSON.stringify({
+        roomId: roomData.roomId || "",
+        type: roomData.type || "auditorium",
+        isHost: roomData.isHost || false,
+        relayJoinCode: roomData.relayJoinCode || "",
+        avatarJson: avatarData || "",
+      });
+      if (roomData.isHost) {
+        console.log("Sending CreateRoom to Unity:", payload);
+        sendMessage("RoomBootstrapper", "CreateRoom", payload);
+      } else {
+        console.log("Sending JoinRoom to Unity:", payload);
+        sendMessage("RoomBootstrapper", "JoinRoom", payload);
+      }
       setHasBootstrapped(true);
     }
-  }, [isLoaded, mode, avatarData, hasBootstrapped, sendMessage]);
+  }, [isLoaded, mode, avatarData, roomData, hasBootstrapped, sendMessage]);
 
   const loadPercent = Math.round(loadingProgression * 100);
 
