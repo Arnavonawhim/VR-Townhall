@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Unity, useUnityContext } from "react-unity-webgl";
 
-export default function UnityEmbed({ mode, avatarData, roomData, onExit }) {
+export default function UnityEmbed({ mode, avatarData, roomData, onExit, inputActive }) {
   const UNITY_URL = "https://pub-cacca82a567344458962d14fa504e338.r2.dev";
 
   const { unityProvider, isLoaded, loadingProgression, sendMessage } = useUnityContext({
@@ -9,7 +9,12 @@ export default function UnityEmbed({ mode, avatarData, roomData, onExit }) {
     dataUrl: `${UNITY_URL}/Meetverse.data`,
     frameworkUrl: `${UNITY_URL}/Meetverse.framework.js`,
     codeUrl: `${UNITY_URL}/Meetverse.wasm`,
+
+    webglContextAttributes: {
+    preserveDrawingBuffer: true,
+    },
   });
+
 
   const [hasBootstrapped, setHasBootstrapped] = useState(false);
 
@@ -57,12 +62,13 @@ export default function UnityEmbed({ mode, avatarData, roomData, onExit }) {
         transition: "all 0.6s cubic-bezier(0.25, 1, 0.5, 1)",
 
         // Dashboard: sits inside the sidebar avatar box area
-        top: isDashboard ? 172 : 0,
-        left: isDashboard ? 20 : 0,
-        width: isDashboard ? 260 : "100%",
-        height: isDashboard ? 260 : "100%",
-        borderRadius: isDashboard ? 12 : 0,
-        pointerEvents: isDashboard ? "none" : "auto",
+        top: isDashboard ? 308 : 0,
+        bottom: isDashboard ? 0 : "auto",
+        left: isDashboard ? 0 : 0,
+        width: isDashboard ? 300 : "100%",
+        height: isDashboard ? "auto" : "100%",
+        borderRadius: isDashboard ? 0 : 0,
+        pointerEvents: (isDashboard || inputActive) ? "none" : "auto",
         boxShadow: isDashboard ? "0 4px 16px rgba(0,0,0,0.2)" : "none",
         border: isDashboard ? "1px solid #2A3A5C" : "none",
       }}
@@ -103,7 +109,7 @@ export default function UnityEmbed({ mode, avatarData, roomData, onExit }) {
 
       <Unity
         unityProvider={unityProvider}
-        tabIndex={isDashboard ? -1 : 0}
+        tabIndex={(isDashboard || inputActive) ? -1 : 0}
         style={{
           width: "100%", height: "100%",
           visibility: isLoaded ? "visible" : "hidden",

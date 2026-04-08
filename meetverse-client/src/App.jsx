@@ -1495,7 +1495,7 @@ function LandingDashboard({ user, onLogout, onEnter, onSkip }) {
   );
 }
 
-function MainDashboard({ user, setUser, onLogout, onJoinRoom }) {
+function MainDashboard({ user, setUser, onLogout, onJoinRoom, avatarData }) {
   const [editingName, setEditingName] = useState(false);
   const [tempName, setTempName] = useState(user?.name || "");
   const [showProfileMenu, setShowProfileMenu] = useState(false);
@@ -1537,6 +1537,30 @@ function MainDashboard({ user, setUser, onLogout, onJoinRoom }) {
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    const blurUnity = () => {
+      // Find and blur the Unity canvas whenever any input is focused
+      const canvas = document.querySelector('canvas');
+      if (canvas) {
+        canvas.blur();
+        // Also remove Unity's pointer capture if active
+        try { canvas.releasePointerCapture && canvas.releasePointerCapture(1); } catch {}
+      }
+    };
+
+    const handleFocusIn = (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+        blurUnity();
+        // Re-focus the input after a tick to ensure browser gives it priority
+        setTimeout(() => e.target.focus(), 0);
+      }
+    };
+
+    document.addEventListener('focusin', handleFocusIn);
+    return () => document.removeEventListener('focusin', handleFocusIn);
+  }, []);
+
+    
   // Create room handler
   const handleCreateRoom = async () => {
     if (!newRoom.name.trim()) { setCreateErr("Room name is required."); return; }
@@ -1589,7 +1613,7 @@ function MainDashboard({ user, setUser, onLogout, onJoinRoom }) {
     big_auditorium: <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M2 7l10-4 10 4-10 4z"/><path d="M4 9v6c0 2 3.6 4 8 4s8-2 8-4V9"/></svg>,
   };
 
-  const modalBg = { position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 };
+  const modalBg = { position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10000 };
   const modalBox = { background: '#fff', borderRadius: 12, padding: 32, maxWidth: 480, width: '90%', boxShadow: '0 8px 32px rgba(0,0,0,0.15)' };
   const inputStyle = { width: '100%', padding: '10px 14px', border: '1px solid #e1e4e8', borderRadius: 6, fontSize: 14, outline: 'none', boxSizing: 'border-box' };
   const btnPrimary = { background: '#131B2E', color: '#fff', border: 'none', borderRadius: 6, padding: '12px 24px', fontSize: 15, fontWeight: 600, cursor: 'pointer', width: '100%' };
@@ -1626,8 +1650,15 @@ function MainDashboard({ user, setUser, onLogout, onJoinRoom }) {
       <div style={{ display: 'flex', width: '100%', marginTop: 60 }}>
         {/* Sidebar */}
         <div style={{ width: 300, background: '#f0f2f5', borderRight: '1px solid #e1e4e8', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '40px 20px', position: 'fixed', top: 60, bottom: 0, left: 0 }}>
-          <div style={{ width: 120, height: 120, borderRadius: '50%', background: '#131B2E', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', marginBottom: 24, boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
-             <svg width="64" height="64" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          <div style={{ width: 120, height: 120, borderRadius: '50%', background: '#131B2E', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', marginBottom: 24, boxShadow: '0 4px 12px rgba(0,0,0,0.1)', overflow: 'hidden' }}>
+            {avatarData ? (
+              <img src="/Arnav.png" alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            ) : (
+              <svg width="64" height="64" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+            )}
           </div>
           {editingName ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12, alignItems: 'center', width: '100%' }}>
@@ -1861,7 +1892,7 @@ export default function App() {
     <>
       <StyleInjector />
       
-      {(appState === "customizer" || appState === "dashboard" || appState === "multiplayer") && (
+      {(appState === "customizer" || appState === "multiplayer") && (
         <UnityEmbed 
            mode={appState} 
            avatarData={avatarData}
@@ -1898,6 +1929,7 @@ export default function App() {
            setUser={setUser}
            onLogout={onLogout} 
            onJoinRoom={handleEnterRoom} 
+           avatarData={avatarData} 
         />
       )}
     </>
