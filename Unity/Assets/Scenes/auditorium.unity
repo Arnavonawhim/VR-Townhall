@@ -319,6 +319,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: -1853094968961178454, guid: 132cb9e7c074eae4580201009cb11c86, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 132cb9e7c074eae4580201009cb11c86, type: 3}
       propertyPath: m_Name
       value: audi1
@@ -992,9 +996,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 774425484}
-  offset: {x: 0, y: 11, z: 15}
+  offset: {x: 0, y: 90, z: 90}
   smoothSpeed: 5
-  lookAtHeightOffset: 3
+  lookAtHeightOffset: 30
 --- !u!114 &880813556
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -72,6 +72,3 @@ dist/
 build/
 .env
 .env.local
-
-##Misc
-Claude.md

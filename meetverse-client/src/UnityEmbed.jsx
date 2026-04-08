@@ -40,29 +40,34 @@ export default function UnityEmbed({ mode, avatarData, roomData, onExit }) {
   }, [isLoaded, mode, avatarData, roomData, hasBootstrapped, sendMessage]);
 
   const loadPercent = Math.round(loadingProgression * 100);
+  const isDashboard = mode === "dashboard";
 
   return (
-    <div style={{
-      position: "fixed",
-      zIndex: 300,
-      background: mode === "dashboard" ? "transparent" : "#0a0a0a",
-      overflow: "hidden",
-      display: "flex", 
-      flexDirection: "column", 
-      alignItems: "center", 
-      justifyContent: "center",
-      transition: "all 0.6s cubic-bezier(0.25, 1, 0.5, 1)",
-      
-      // Dynamic mode styling to perfectly float over the React Dashboard Avatar sidebar box
-      top: mode === "dashboard" ? 100 : 0,
-      left: mode === "dashboard" ? 90 : 0,
-      width: mode === "dashboard" ? 120 : "100%",
-      height: mode === "dashboard" ? 120 : "100%",
-      borderRadius: mode === "dashboard" ? "50%" : 0,
-      pointerEvents: mode === "dashboard" ? "none" : "auto",
-      boxShadow: mode === "dashboard" ? "0 4px 12px rgba(0,0,0,0.15)" : "none",
-    }}>
-      {!isLoaded && mode !== "dashboard" && (
+    <div
+      id="unity-container"
+      style={{
+        position: "fixed",
+        zIndex: isDashboard ? 5 : 300,
+        background: isDashboard ? "#131B2E" : "#0a0a0a",
+        overflow: "hidden",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        transition: "all 0.6s cubic-bezier(0.25, 1, 0.5, 1)",
+
+        // Dashboard: sits inside the sidebar avatar box area
+        top: isDashboard ? 172 : 0,
+        left: isDashboard ? 20 : 0,
+        width: isDashboard ? 260 : "100%",
+        height: isDashboard ? 260 : "100%",
+        borderRadius: isDashboard ? 12 : 0,
+        pointerEvents: isDashboard ? "none" : "auto",
+        boxShadow: isDashboard ? "0 4px 16px rgba(0,0,0,0.2)" : "none",
+        border: isDashboard ? "1px solid #2A3A5C" : "none",
+      }}
+    >
+      {!isLoaded && !isDashboard && (
         <div style={{
           position: "absolute", inset: 0,
           display: "flex", flexDirection: "column",
@@ -98,6 +103,7 @@ export default function UnityEmbed({ mode, avatarData, roomData, onExit }) {
 
       <Unity
         unityProvider={unityProvider}
+        tabIndex={isDashboard ? -1 : 0}
         style={{
           width: "100%", height: "100%",
           visibility: isLoaded ? "visible" : "hidden",

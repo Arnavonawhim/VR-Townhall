@@ -17,9 +17,9 @@ This Repository is used for a project to submit in India Innovates Hackathon 202
 ### Avatar Customisation and Multiplayer
 
 Theres an initial customiser for everyone which is also the first scene of unity where we select our avatar and customise it that scene is done already 
-Once they have selected their avatar the data is stored in node, the avatar is saved they can change it anytime they want.
-remember the avatar customising is in unity but dashboard is in react I am gonna add node backend in this project
-after we click complete I want users to load into a dashboard made in react where they can see all the rooms and can join them it should be an aesthetic well designed platform with viewers and organisers having a simillar dashbaord.
+after we click complete I want users to load into a spawn area which is multiplayer each user can be loaded there with their avatars and can walk around and interact with each other
+all povs are third person and we want to make sure everyone can see everyone in respective avatars
+from there we should get a option to join rooms and create rooms you can only create rooms if you are a creator/organiser role during signup
 
 
 ### Mic input output
@@ -33,16 +33,6 @@ There will be a rag chatbot built from langchain to accomodate viewer's question
 ### multilingual support
 -theres a node api for stt we will use that to create text from organiser speech and then convert to required language and show it as subtitles
 
-### Current Architecture & React-Unity Bridge Flow (Already Implemented)
-- **App Routing (React)**: The state flows through `landing` -> `customizer` -> `dashboard` -> `multiplayer`.
-- **Unity Optimization**: To avoid slow WebGL reloading, `UnityEmbed.jsx` stays mounted in the DOM across UI states. 
-- **Avatar Setup to Dashboard Flow**:
-  1. User customises their avatar in Unity (Customizer scene).
-  2. Clicking "Complete" triggers `SceneLoader.SaveAndLoadScene()`, which saves the avatar choices to `AvatarDataStore` cache and fires a JSLib event `NotifyAvatarComplete` to React (`window.dispatchReactEvent`).
-  3. React intercepts this event, saves the avatar JSON data in state, and transitions to the `dashboard` UI.
-  4. React uses CSS to smoothly shrink and reposition the WebGL Canvas into a 120x120px circular overlay on the sidebar.
-  5. Concurrently, React calls `sendMessage("SceneLoader", "LoadDashboardScene")`. Unity loads `DashboardAvatarScene`, and a script called `DashboardAvatarManager.cs` automatically reads `AvatarDataStore` and applies the custom clothes to the avatar, resulting in a seamless 3D UI widget.
-- **Frontend Theme**: Strict dark navy (`#131B2E`) and purple (`#9D75CB`) formal styling across all React components.
 
 ### Things claude should follow 
 -- check existing code first before creating new code 
